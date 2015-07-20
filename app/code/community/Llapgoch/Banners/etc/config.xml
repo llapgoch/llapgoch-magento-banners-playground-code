@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Llapgoch_Banners>
+			<version>0.1.0</version>
+		</Llapgoch_Banners>
+	</modules>
+		
+	<global>
+		<helpers>
+			<llapgoch_banners>
+				<class>Llapgoch_Banners_Helper</class>
+			</llapgoch_banners>
+		</helpers>
+		
+		<models>
+			<llapgoch_banners>
+				<class>Llapgoch_Banners_Model</class>
+				<resourceModel>llapgoch_banners_resource</resourceModel>
+			</llapgoch_banners>
+			
+			<llapgoch_banners_resource>
+				<class>Llapgoch_Banners_Model_Resource</class>
+				<entities>
+					<banner>
+						<table>llapgoch_banner</table>
+					</banner>
+					<banner_item>
+						<table>llapgoch_banner_item</table>
+					</banner_item>
+					<banner_item_image>
+						<table>llapgoch_banner_item_image</table>
+					</banner_item_image>
+				</entities>
+			</llapgoch_banners_resource>
+		</models>
+		
+		<blocks>
+			<llapgoch_banners>
+				<class>Llapgoch_Banners_Block</class>
+			</llapgoch_banners>
+		</blocks>
+		
+		<resources>
+			<llapgoch_banners_setup>
+				<setup>
+					<module>Llapgoch_Banners</module>
+				</setup>
+			</llapgoch_banners_setup>
+		</resources>
+	</global>
+	
+	<adminhtml>
+		<layout>
+			<updates>
+				<llapgoch_banners>
+					<file>llapgoch/banners.xml</file>
+				</llapgoch_banners>
+			</updates>
+		</layout>
+	</adminhtml>
+	
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<Llapgoch_Banners before="Mage_Adminhtml">Llapgoch_Banners_Adminhtml</Llapgoch_Banners>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
+</config>

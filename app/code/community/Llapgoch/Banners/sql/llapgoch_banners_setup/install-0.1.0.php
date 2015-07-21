@@ -100,7 +100,7 @@ $this->getConnection()->createTable(
 	->addColumn('screen_width_max', Varien_Db_Ddl_Table::TYPE_SMALLINT, null, array(
 		'nullable' => true
 	), 'The maximum screen width to show the image')
-	->addColumn('created_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+	->addColumn('creation_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
 		'nullable' => false
 	), 'Banner Created Time')
 	->addColumn('update_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(

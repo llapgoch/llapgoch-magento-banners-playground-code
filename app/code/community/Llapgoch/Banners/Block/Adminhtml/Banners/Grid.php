@@ -1,9 +1,16 @@
 <?php
 class Llapgoch_Banners_Block_Adminhtml_Banners_Grid extends Mage_Adminhtml_Block_Widget_Grid{
+	protected function _construct(){
+		parent::_construct();
+		$this->setId('bannersGrid');
+		$this->setDefaultSort('banner_id');
+		$this->setDefaultDir('ASC');
+		$this->setSaveParametersInSession(true);
+	}
+	
 	protected function _prepareCollection(){
 		$collection = Mage::getResourceModel('llapgoch_banners/banner_collection');
 		
-	
 		$collection->getSelect()->joinLeft(
 			array('banner_item' => $collection->getTable('llapgoch_banners/banner_item')),
 			'banner_item.banner_id=main_table.banner_id',
@@ -12,13 +19,12 @@ class Llapgoch_Banners_Block_Adminhtml_Banners_Grid extends Mage_Adminhtml_Block
 		
 		$collection->getSelect()->group('main_table.banner_id');
 		$collection->addExpressionFieldToSelect('num_banner_items', 'COUNT(*)', null);
-		
+		// Another way to add an aggregate column
 		// $collection->getSelect()->columns('COUNT(*)');
-
-		$this->setCollection($collection);
+		$this->setCollection($collection);		
 		
-		echo $collection->getSelect();
-		
+		// This has to be called after we've set our collection - it puts all of the filter
+		// data onto our defined collection
 		parent::_prepareCollection();
 	}
 	
@@ -31,21 +37,14 @@ class Llapgoch_Banners_Block_Adminhtml_Banners_Grid extends Mage_Adminhtml_Block
 		parent::_prepareColumns();
 		$helper = Mage::helper('llapgoch_banners');
 		
-		$this->addColumn('banner_id', array(
-			'header' => $helper->__('ID'),
-			'type' => 'text',
-			'index' => 'banner_id',
-			'width' => '150px'
-		));
-		
 		$this->addColumn('title', array(
 			'header' => $helper->__('Title'),
-			'type' => 'string',
+			'type' => 'text',
 			'index' => 'title'
 		));
 		
 		$this->addColumn('is_active', array(
-			'header' => $helper->__('Active'),
+			'header' => $helper->__('Status'),
 			'type' => 'options',
 			'index' => 'is_active',
 			'width' => '150px',
@@ -53,19 +52,36 @@ class Llapgoch_Banners_Block_Adminhtml_Banners_Grid extends Mage_Adminhtml_Block
 			'options' => array(
 				1 => 'Enabled',
 				0 => 'Disabled'
-			)
+			),
+			'filter_condition_callback' => array($this, '_isActiveFilter'),
 		));
 		
 		$this->addColumn('num_banner_items', array(
 			'header' => $helper->__('Number of Banner Items'),
-			'type' => 'options',
+			'type' => 'text',
 			'index' => 'num_banner_items',
 			'width' => '150px',
-			'options' => array(
-				1 => 'Horse',
-				2 => 'Two'
- 			),
+			
 			'filter_condition_callback' => array($this, '_numBannersFilter'),
+		));
+		
+		$this->addColumn('edit_banner_items', array(
+			'header' => '',
+			'type' => 'action',
+			'index' => 'test',
+			'width' => '200px',
+			'getter' => 'getId',
+			'actions' => array(
+				array(
+					'caption' => $helper->__('View Banner Items'),
+					'url' => array(
+						'base' => '*/*/editbanneritems',
+						'field' => 'id' 
+					)
+				),
+			),
+			'sortable' => false,
+			'filter' => false
 		));
 		
 		return $this;
@@ -77,6 +93,15 @@ class Llapgoch_Banners_Block_Adminhtml_Banners_Grid extends Mage_Adminhtml_Block
 	// operations, so we use the aggregate function in the having, too.
 	protected function _numBannersFilter($collection, $column){
 		$collection->getSelect()->having('COUNT(*) = ?', $column->getFilter()->getValue());
+		return $this;
+	}
+	
+	// We need to do this because we've got two is_active fields (because of the join table)
+	// So we bind it to the banners table here
+	protected function _isActiveFilter($collection, $column){
+		$collection->getSelect()->where(
+			 "main_table.is_active = ?", $column->getFilter()->getValue()
+		);
 	}
 	
 }
